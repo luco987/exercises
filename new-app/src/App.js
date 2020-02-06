@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import logo from "./logo.svg";
 import "./App.css";
 import { todos } from "./todos.json";
 import TodoForm from "./components/TodoForm";
@@ -8,7 +7,8 @@ class App extends Component {
   constructor() {
     super();
     this.state = {
-      todos
+      todos,
+      disabled: true
     };
     this.handleAddTodo = this.handleAddTodo.bind(this);
   }
@@ -16,6 +16,35 @@ class App extends Component {
   handleAddTodo(todo) {
     this.setState({
       todos: [...this.state.todos, todo]
+    });
+  }
+
+  componentDidMount() {
+    this.setState({
+      title: this.state.todos.title
+    });
+  }
+
+  handleImput(e) {
+    const { value, name } = e.target;
+    this.setState({
+      [name]: value
+    });
+    console.log(value, name);
+  }
+
+  handleModifyTodo() {
+    this.setState({
+      disabled: false
+    });
+  }
+  handleAceptTodo(index, e) {
+    var todos = [...this.state.todos];
+    const { value } = e.target;
+    todos[index].title = value;
+    this.setState({
+      disabled: true,
+      todos
     });
   }
 
@@ -32,10 +61,16 @@ class App extends Component {
   render() {
     const todos = this.state.todos.map((todo, index) => {
       return (
-        <div className="col-md-4">
+        <div key={index} className="col-md-4">
           <div className="card mt-4">
             <div className="card-header text-center">
-              <h3>{todo.title}</h3>
+              <input
+                type="text"
+                name="title"
+                onChange={this.handleImput.bind(this)}
+                disabled={this.state.disabled}
+                defaultValue={this.state.todos.title}
+              ></input>
               <span className="badge badge-pill badge-danger ml-2">
                 {todo.priority}
               </span>
@@ -50,6 +85,22 @@ class App extends Component {
                 onClick={this.handleRemoveTodo.bind(this, index)}
               >
                 Delete
+              </button>
+              <button
+                className={
+                  this.state.disabled ? "btn btn-danger ml-2" : "d-none"
+                }
+                onClick={this.handleModifyTodo.bind(this)}
+              >
+                Modify
+              </button>
+              <button
+                className={
+                  this.state.disabled ? "d-none" : "btn btn-danger ml-2"
+                }
+                onClick={this.handleAceptTodo.bind(this, index)}
+              >
+                Acept
               </button>
             </div>
           </div>
@@ -69,7 +120,6 @@ class App extends Component {
         <div className="container">
           <div className="row mt-4">{todos}</div>
         </div>
-        <img src={logo} className="App-logo" alt="logo" />
         <TodoForm onAddTodo={this.handleAddTodo} />
       </div>
     );

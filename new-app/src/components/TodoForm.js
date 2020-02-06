@@ -28,7 +28,7 @@ class TodoForm extends Component {
 
   render() {
     return (
-      <div className="card">
+      <div className="card mt-4">
         <form className="card-body" onSubmit={this.handleSubmit}>
           <div className="form-group">
             <input
